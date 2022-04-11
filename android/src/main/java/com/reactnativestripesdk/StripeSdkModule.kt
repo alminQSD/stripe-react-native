@@ -216,13 +216,12 @@ class StripeSdkModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
     val url = getValOr(appInfo, "url", "")
     Stripe.appInfo = AppInfo.create(name, version, url, partnerId)
     stripe = Stripe(reactApplicationContext, publishableKey, stripeAccountId)
-
-    PaymentConfiguration.init(reactApplicationContext, publishableKey, stripeAccountId)
-
-    paymentLauncherFragment = PaymentLauncherFragment(stripe, publishableKey, stripeAccountId)
+    paymentLauncherFragment = PaymentLauncherFragment(stripe!!, publishableKey, stripeAccountId)
     (currentActivity as AppCompatActivity).supportFragmentManager.beginTransaction()
       .add(paymentLauncherFragment, "payment_launcher_fragment")
       .commit()
+
+    PaymentConfiguration.init(reactApplicationContext, publishableKey, stripeAccountId)
 
     val localBroadcastManager = LocalBroadcastManager.getInstance(reactApplicationContext)
     localBroadcastManager.registerReceiver(mPaymentSheetReceiver, IntentFilter(ON_PAYMENT_RESULT_ACTION))
