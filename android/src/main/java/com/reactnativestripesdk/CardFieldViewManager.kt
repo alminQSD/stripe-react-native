@@ -50,10 +50,10 @@ class CardFieldViewManager : SimpleViewManager<CardFieldView>() {
     view.setCardStyle(cardStyle)
   }
 
-  @ReactProp(name = "placeholder")
+  @ReactProp(name = "placeholders")
   @SuppressWarnings("unused")
-  fun setPlaceHolders(view: CardFieldView, placeholder: ReadableMap) {
-    view.setPlaceHolders(placeholder)
+  fun setPlaceHolders(view: CardFieldView, placeholders: ReadableMap) {
+    view.setPlaceHolders(placeholders)
   }
 
   override fun createViewInstance(reactContext: ThemedReactContext): CardFieldView {
