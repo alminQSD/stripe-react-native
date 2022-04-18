@@ -57,7 +57,7 @@ class StripeSdkModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
 
   private val mActivityEventListener = object : BaseActivityEventListener() {
     override fun onActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
-      if (::stripe.isInitialized) {
+      if (stripe != null) {
         paymentSheetFragment?.activity?.activityResultRegistry?.dispatchResult(requestCode, resultCode, data)
         googlePayFragment?.activity?.activityResultRegistry?.dispatchResult(requestCode, resultCode, data)
         try {
@@ -540,8 +540,8 @@ class StripeSdkModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
   @SuppressWarnings("unused")
   fun retrievePaymentIntent(clientSecret: String, promise: Promise) {
     CoroutineScope(Dispatchers.IO).launch {
-      stripe?.let {
-        val paymentIntent = it.retrievePaymentIntentSynchronous(clientSecret)
+      stripe?.let { stripe ->
+        val paymentIntent = stripe.retrievePaymentIntentSynchronous(clientSecret)
         paymentIntent?.let {
           promise.resolve(createResult("paymentIntent", mapFromPaymentIntentResult(it)))
         } ?: run {
@@ -557,8 +557,8 @@ class StripeSdkModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
   @SuppressWarnings("unused")
   fun retrieveSetupIntent(clientSecret: String, promise: Promise) {
     CoroutineScope(Dispatchers.IO).launch {
-      stripe?.let {
-        val setupIntent = it.retrieveSetupIntentSynchronous(clientSecret)
+      stripe?.let { stripe ->
+        val setupIntent = stripe.retrieveSetupIntentSynchronous(clientSecret)
         setupIntent?.let {
           promise.resolve(createResult("setupIntent", mapFromSetupIntentResult(it)))
         } ?: run {
@@ -699,6 +699,10 @@ class StripeSdkModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
   @ReactMethod
   @SuppressWarnings("unused")
   fun verifyMicrodeposits(isPaymentIntent: Boolean, clientSecret: String, params: ReadableMap, promise: Promise) {
+    val stripe = stripe ?: run {
+      promise.resolve(MISSING_INIT_ERROR)
+      return
+    }
     val amounts = params.getArray("amounts")
     val descriptorCode = params.getString("descriptorCode")
 
