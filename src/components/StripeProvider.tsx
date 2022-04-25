@@ -3,7 +3,8 @@ import React, { useEffect } from 'react';
 import NativeStripeSdk from '../NativeStripeSdk';
 import { isAndroid, shouldAttributeExpo } from '../helpers';
 import type { AppInfo, InitStripeParams, InitialiseParams } from '../types';
-import pjson from '../../package.json';
+// @ts-ignore
+import pjson from '../../../package.json';
 
 const EXPO_PARTNER_ID = 'pp_partner_JBN7LkABco2yUu';
 
